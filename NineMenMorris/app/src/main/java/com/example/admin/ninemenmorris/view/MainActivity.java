@@ -2,8 +2,10 @@ package com.example.admin.ninemenmorris.view;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.FrameLayout;
 
 import com.example.admin.ninemenmorris.R;
 
@@ -13,13 +15,18 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        setContentView(R.layout.activity_main);
-        setContentView(new BoardView(this));
-//        Toolbar toolbar = (Toolbar) findViewById(
-//                R.id.toolbar);
-//        setSupportActionBar(toolbar);
+        setContentView(R.layout.activity_main);
+        Toolbar toolbar = (Toolbar) findViewById(
+                R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        FrameLayout rootLayout = (FrameLayout)findViewById(R.id.framelo);
+        rootLayout.addView(new BoardView(this));
+        rootLayout.addView(new PieceView(this));
+
 
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
