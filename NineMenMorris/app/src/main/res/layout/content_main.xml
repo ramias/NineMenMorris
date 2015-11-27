@@ -10,21 +10,28 @@
     tools:showIn="@layout/activity_main" tools:context=".MainActivity"
     android:background="#ffffff">
 
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Medium Text"
+        android:id="@+id/textView"
+        android:layout_gravity="center_horizontal"
+        android:gravity="center"
+        android:paddingBottom="20dp" />
+
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_alignParentTop="true"
         android:layout_alignParentStart="true"
         android:layout_marginBottom="50dp"
-        android:id="@+id/framelo">
+        android:id="@+id/framelo"
+        android:layout_below="@+id/textView">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="Medium Text"
-            android:id="@+id/textView"
-            android:layout_gravity="center_horizontal" />
+        <com.example.admin.ninemenmorris.view.BoardView
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:id="@+id/boardview" />
 
     </FrameLayout>
 

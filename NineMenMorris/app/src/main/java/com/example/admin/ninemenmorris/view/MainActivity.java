@@ -5,7 +5,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.FrameLayout;
 
 import com.example.admin.ninemenmorris.R;
 
@@ -19,10 +18,6 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(
                 R.id.toolbar);
         setSupportActionBar(toolbar);
-
-        FrameLayout rootLayout = (FrameLayout)findViewById(R.id.framelo);
-        rootLayout.addView(new BoardView(this));
-        rootLayout.addView(new PieceView(this));
 
 
     }
