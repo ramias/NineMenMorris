@@ -46,7 +46,6 @@ public class PieceView extends View {
                 invalidate();
             }
 
-
             return true;
         }
 

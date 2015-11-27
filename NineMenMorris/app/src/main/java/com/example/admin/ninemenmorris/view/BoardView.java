@@ -40,20 +40,33 @@ public class BoardView extends View {
             int y = (int) event.getY();
             Log.i("coords", "x = " + x + "   y = " + y);
             Log.i("width", "h =" + h + "  h/5 = " + h / 6);
+            // 1,1
             if (x < w / 28 + size && x > w / 28 - size && y < h / 7 + size && y > h / 7 - size) {
                 piecebounds = new Rect(w / 28 - size, h / 7 - size, w / 28 + size, h / 7 + size);
                 invalidate();
+                // 1,4
             } else if (x < w / 28 + size && x > w / 28 - size && y < h / 2 + size && y > h / 2 - size) {
                 piecebounds = new Rect(w / 28 - size, h / 2 - size, w / 28 + size, h / 2 + size);
                 invalidate();
+                // 1,7
             } else if (x < w / 28 + size && x > w / 28 - size && y < h * 6 / 7 + size && y > h * 6 / 7 - size) {
                 piecebounds = new Rect(w / 28 - size, h * 6 / 7 - size, w / 28 + size, h * 6 / 7 + size);
                 invalidate();
+                // 4,1
             } else if (x < w / 2 + size && x > w / 2 - size && y < h / 7 + size && y > h / 7 - size) {
                 piecebounds = new Rect(w / 2 - size, h / 7 - size, w / 2 + size, h / 7 + size);
                 invalidate();
+                // 7,1
             } else if (x < w * 27 / 28 + size && x > w * 27 / 28 - size && y < h / 7 + size && y > h / 7 - size) {
                 piecebounds = new Rect(w * 27 / 28 - size, h / 7 - size, w * 27 / 28 + size, h / 7 + size);
+                invalidate();
+                // 7,4
+            } else if (x < (w*27) / 28 + size && x > (w*27) / 28 - size && y < h / 2 + size && y > h / 2 - size) {
+                piecebounds = new Rect((w*27) / 28 - size, h / 2 - size, (w*27) / 28 + size, h / 2 + size);
+                invalidate();
+                // 7,7
+            }else if (x < (w*27) / 28 + size && x > (w*27) / 28 - size && y < h * 6 / 7 + size && y > h * 6 / 7 - size) {
+                piecebounds = new Rect((w*27) / 28 - size, h * 6 / 7 - size, (w*27) / 28 + size, h * 6 / 7 + size);
                 invalidate();
             }
 
