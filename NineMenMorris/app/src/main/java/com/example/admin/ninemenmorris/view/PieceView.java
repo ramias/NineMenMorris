@@ -41,10 +41,11 @@ public class PieceView extends View {
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
-            if (isSelected)
+            if (isSelected) {
                 isSelected = false;
-            else
+            }else {
                 isSelected = true;
+            }
             invalidate();
             return super.onTouchEvent(event);
         }
@@ -64,11 +65,19 @@ public class PieceView extends View {
         }
     }
 
+    public Rect getPiecebounds() {
+        return piecebounds;
+    }
+
+    public void setPiecebounds(Rect piecebounds) {
+        this.piecebounds = piecebounds;
+    }
+
     public int getPosition() {
         return position;
     }
 
     public void setPosition(int position) {
-        this.position = position;
+        if (isSelected) this.position = position;
     }
 }

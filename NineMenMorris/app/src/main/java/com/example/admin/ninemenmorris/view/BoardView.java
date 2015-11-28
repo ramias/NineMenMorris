@@ -22,11 +22,13 @@ public class BoardView extends View {
     private PiecePlacer placer;
     private Rect piecebounds = null;
     private LinkedList<PieceView> pieceList;
+    private String pieceColor;
 
     public BoardView(Context context, AttributeSet attrs) {
         super(context, attrs);
         pieceList = new LinkedList<>();
         placer = new PiecePlacer();
+        pieceColor = "RED";
         Resources resources = context.getResources();
         board = (Drawable)
                 resources.getDrawable(R.drawable.board);
@@ -40,9 +42,16 @@ public class BoardView extends View {
 
             int position = validateCoords(x, y);
             if (position > 0) {
-                dispatchEvent(event, position);
-                if (placer.touchOn(position) == placer.NEW_PIECE) {
-                    pieceList.add(new PieceView(this.getContext(), piecebounds, position, "BLUE"));
+                int action = placer.touchOn(position);
+                if (action == placer.NEW_PIECE) {
+                    pieceList.add(new PieceView(this.getContext(), piecebounds, position, pieceColor));
+                    toggleColor();
+                    //unfinished code below (else if)
+//                } else if (action == placer.MOVE_PIECE) {
+//                    moviePiece(event,position,piecebounds);
+//                    toggleColor();
+                } else {
+                    selectPiece(event, position);
                 }
             }
             invalidate();
@@ -51,8 +60,28 @@ public class BoardView extends View {
 
         return false;
     }
+    //Unfinished code
+    private void moviePiece(MotionEvent event, int position, Rect piecebounds) {
+        for (PieceView p : pieceList) {
+            if (p.getPosition() == position) {
+                p.setPosition(position);
+                p.setPiecebounds(piecebounds);
+                break;
+            }
+        }
+    }
 
-    private void dispatchEvent(MotionEvent event, int pos) {
+    private void toggleColor() {
+        if (pieceColor.equals("RED"))
+            pieceColor = "BLUE";
+        else
+            pieceColor = "RED";
+    }
+
+    /*
+        Dispatches the event to the specific piece
+     */
+    private void selectPiece(MotionEvent event, int pos) {
         for (PieceView p : pieceList) {
             if (p.getPosition() == pos) {
                 p.dispatchTouchEvent(event);
@@ -69,6 +98,7 @@ public class BoardView extends View {
         board.setBounds(bounds);
         board.draw(canvas);
 
+        //Draw all pieces
         for (PieceView p : pieceList) {
             p.draw(canvas);
         }
