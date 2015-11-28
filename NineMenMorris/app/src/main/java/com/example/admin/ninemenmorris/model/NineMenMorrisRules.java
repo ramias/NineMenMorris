@@ -40,8 +40,8 @@ public class NineMenMorrisRules {
     /**
      * Returns true if a move is successful
      */
-    public boolean legalMove(int To, int From, int color) {
-        if (color == turn) {
+    public boolean legalMove(int To, int From) {
+//        if (color == turn) {
             if (turn == RED_MOVES) {
                 if (redmarker >= 0) {
                     if (gameplan[To] == EMPTY_SPACE) {
@@ -90,9 +90,9 @@ public class NineMenMorrisRules {
                     return false;
                 }
             }
-        } else {
-            return false;
-        }
+//        } else {
+//            return false;
+//        }
     }
 
     /**
@@ -151,13 +151,13 @@ public class NineMenMorrisRules {
         return false;
     }
 
-    /**
+    /** ÄNDRADE FROM TILL TO BARA
      * Request to remove a marker for the selected player.
      * Returns true if the marker where successfully removed
      */
-    public boolean remove(int From, int color) {
-        if (gameplan[From] == color) {
-            gameplan[From] = EMPTY_SPACE;
+    public boolean remove(int To, int color) {
+        if (gameplan[To] == color) {
+            gameplan[To] = EMPTY_SPACE;
             return true;
         } else
             return false;
