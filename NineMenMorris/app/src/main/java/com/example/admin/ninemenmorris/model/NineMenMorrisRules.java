@@ -38,27 +38,12 @@ public class NineMenMorrisRules {
         turn = RED_MOVES;
     }
 
-    /**
-     * Returns true if a move is successful
-     */
-    public boolean legalMove(int To, int From) {
-//        if (color == turn) {
+    public boolean legalPlacement(int To) {
         if (turn == RED_MOVES) {
             if (redmarker > 0) {
                 if (gameplan[To] == EMPTY_SPACE) {
                     gameplan[To] = RED_MARKER;
                     redmarker--;
-                    turn = BLUE_MOVES;
-                    return true;
-                }
-            }
-                /*else*/
-            if (gameplan[To] == EMPTY_SPACE) {
-                boolean valid = isValidMove(To, From);
-                if (valid == true) {
-                    gameplan[To] = RED_MARKER;
-                    //LAGT TILL RADEN UNDER
-                    gameplan[From] = EMPTY_SPACE;
                     turn = BLUE_MOVES;
                     return true;
                 } else {
@@ -74,9 +59,37 @@ public class NineMenMorrisRules {
                     bluemarker--;
                     turn = RED_MOVES;
                     return true;
+                } else {
+                    return false;
                 }
+            } else {
+                return false;
             }
-            if (gameplan[To] == EMPTY_SPACE) {
+        }
+    }
+
+    /**
+     * Returns true if a move is successful
+     */
+    public boolean legalMove(int To, int From) {
+//        if (color == turn) {
+        if (turn == RED_MOVES ) {
+            if (gameplan[To] == EMPTY_SPACE && redmarker == 0) {
+                boolean valid = isValidMove(To, From);
+                if (valid == true) {
+                    gameplan[To] = RED_MARKER;
+                    //LAGT TILL RADEN UNDER
+                    gameplan[From] = EMPTY_SPACE;
+                    turn = BLUE_MOVES;
+                    return true;
+                } else {
+                    return false;
+                }
+            } else {
+                return false;
+            }
+        } else {
+            if (gameplan[To] == EMPTY_SPACE && bluemarker == 0) {
                 boolean valid = isValidMove(To, From);
                 if (valid == true) {
                     gameplan[To] = BLUE_MARKER;
@@ -181,6 +194,7 @@ public class NineMenMorrisRules {
         else
             return false;
     }
+
     /**
      * Returns EMPTY_SPACE = 0 BLUE_MARKER = 4 RED_MARKER = 5
      */
@@ -193,7 +207,7 @@ public class NineMenMorrisRules {
      */
     private boolean isValidMove(int to, int from) {
 
-        if (to != EMPTY_SPACE) return false;
+        if (gameplan[to] != EMPTY_SPACE) return false;
 
         switch (to) {
             case 1:
@@ -248,13 +262,11 @@ public class NineMenMorrisRules {
         return false;
     }
 
-
-    public boolean isSelectable() {
-        if (turn == RED_MOVES && redmarker <= 0 || turn == BLUE_MOVES && bluemarker <= 0) {
-            return true;
-        } else {
-            return false;
-        }
+    public int getTotalMarks(){
+        return redmarker + bluemarker;
+    }
+    public int getTurnMarker() {
+        return turn + 3;
     }
 
     public void switchBoardPositions(int from, int to) {

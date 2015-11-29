@@ -9,34 +9,45 @@ import com.example.admin.ninemenmorris.model.NineMenMorrisRules;
  */
 public class PiecePlacer {
     private NineMenMorrisRules game;
-    public static final int NO_ACTION = 0, NEW_PIECE = 1, MOVE_PIECE = 2;
+    public static final int NO_ACTION = 0, NEW_PIECE = 1, SELECT_PIECE = 2, DESELECT_PIECE = 3, MOVE_PIECE = 4;
+//    private boolean pieceSelected; // flag to indicate if a piece has been selected.
+
 
     public PiecePlacer() {
         game = new NineMenMorrisRules();
     }
 
-    public int touchOn(int position) {
-        int from;
-        //Checks if the player has selected a piece or is placing a new piece on the board
-        // All pieces from a player has to be played out before a player can select a piece.
-        if (game.board(position) != game.EMPTY_SPACE) {
-            if(game.isSelectable()){
-                return MOVE_PIECE;
-            }
-        } else {
-            from = 0;
-            if (game.legalMove(position, from)) {
+    public int touchOn(int position, int selectedPiecePosition) {
+        Log.i("aa", " pos : " + position + " -- prev pos : " + selectedPiecePosition);
+        if (game.getTotalMarks() > 0) { // 1st stage: cant move only place.
+            if (game.legalPlacement(position)) {
                 return NEW_PIECE;
             }
+        } else {  //2nd stage: can move pieces
+            if (selectedPiecePosition != position) {
+                if (selectedPiecePosition > 0) {
+                    if (game.legalMove(position, selectedPiecePosition)) {
+                        return MOVE_PIECE;
+                    } else {
+                        return NO_ACTION;
+                    }
+                } else {
+                    if (game.board(position) == game.getTurnMarker()) {
+                        return SELECT_PIECE;
+                    }
+                    return NO_ACTION;
+                }
+            } else {
+                return DESELECT_PIECE;
+            }
+
         }
         return NO_ACTION;
     }
 
-    public void switchBoardPositions(int from, int to) {
-        game.switchBoardPositions(from, to);
-    }
 
-    public boolean has3InRow(int position) {
+    public boolean hasMill(int position) {
         return game.remove(position); // konstigt namn, remove?
     }
+
 }

@@ -6,7 +6,6 @@ import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -24,15 +23,15 @@ public class BoardView extends View {
     private Rect piecebounds = null;
     private LinkedList<PieceView> pieceList;
     private String pieceColor;
-    private boolean pieceSelected; // flag to indicate if a piece has been selected.
     private int selectedPiecePosition; // If user selects a piece the position is stored here so that the position can be marked as empty later on.
 
     public BoardView(Context context, AttributeSet attrs) {
         super(context, attrs);
         pieceList = new LinkedList<>();
+        selectedPiecePosition = 0;
         placer = new PiecePlacer();
         pieceColor = "RED";
-        pieceSelected = false;
+
         Resources resources = context.getResources();
         board = (Drawable)
                 resources.getDrawable(R.drawable.board);
@@ -40,32 +39,33 @@ public class BoardView extends View {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-
-
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
             int x = (int) event.getX();
             int y = (int) event.getY();
             int position = validateCoords(x, y);
             if (position > 0) {
-                int action = placer.touchOn(position);
+                int action = placer.touchOn(position, selectedPiecePosition);
 
-                if(pieceSelected){
-                    if(selectedPieceAction(action, position, event)){
-                        return true;
-                    }else{
-                        return false;
-                    }
-                }
                 // if-blocket kollar om man har markerat en bricka och valt att placera den på en ny tom position
                 if (action == placer.NEW_PIECE) { // Places a new brick on the board
                     pieceList.add(new PieceView(this.getContext(), piecebounds, position, pieceColor));
                     // Check if player has a mill
-                    toggleColor();
+                    toggleTurn();
                     // Selects a excisting brick from the bord if all bricks have been played out
-                } else if (action == placer.MOVE_PIECE) {
-                    selectedPiecePosition = position;
+                } else if (action == placer.SELECT_PIECE) {
                     selectPiece(event, position);
-                    pieceSelected = true;
+                } else if (action == placer.DESELECT_PIECE) {
+                    deselectPiece(event, position);
+                } else if (action == placer.MOVE_PIECE) {
+                    moviePiece(position, piecebounds);
+                    deselectPiece(event, position);
+                    // Check if player has a mill (3 in a row)
+//                    if (placer.hasMill(position)) {
+//                        Kommer vi in här så har vi 3 i rad och ska ges möjligheten att ta en bricka av motståndaren
+//                        Måste ta reda på vems tur det är.
+//                    }
+                } else {
+                    return false;
                 }
             }
             invalidate();
@@ -74,49 +74,19 @@ public class BoardView extends View {
         return false;
     }
 
-    // Du får gärna döpa om den här metoden :P
-    // Method for moving a piece around the board
-    private boolean selectedPieceAction(int action, int position, MotionEvent event) {
-        if (action == 0) {
-            //metod som flyttar den markerade brickan
-            moviePiece(event, position, piecebounds);
-            // Markerar den tidigare positionen som tom och den nya som upptagen.
-            placer.switchBoardPositions(selectedPiecePosition, position);
-            // Check if player has a mill (3 in a row)
-            boolean haveMill = placer.has3InRow(position);
-            if (haveMill) {
-                //Kommer vi in här så har vi 3 i rad och ska ges möjligheten att ta en bricka av motståndaren
-                // Måste ta reda på vems tur det är.
-                Log.i("ttt", " 3 In a row: " + haveMill);
-            }
-            pieceSelected = false;
-            invalidate();
-            return true;
-            // else if-blocket kollar om man har markerat en bricka och sen väljer att av markera samma bricka.
-        } else if (position == selectedPiecePosition) {
-            pieceSelected = false;
-            selectPiece(event, position);
-            invalidate();
-            return true;
-        } else{
-            return false;
-        }
-    }
-    
+
     //Unfinished code
-    private void moviePiece(MotionEvent event, int position, Rect piecebounds) {
-        Log.i("mm","moviePiece pos: "+position);
+    private void moviePiece(int position, Rect piecebounds) {
         for (PieceView p : pieceList) {
             if (p.getPosition() == selectedPiecePosition) {
                 p.setPosition(position);
                 p.setPiecebounds(piecebounds);
-                p.dispatchTouchEvent(event);
                 break;
             }
         }
     }
 
-    private void toggleColor() {
+    private void toggleTurn() {
         if (pieceColor.equals("RED"))
             pieceColor = "BLUE";
         else
@@ -127,6 +97,7 @@ public class BoardView extends View {
         Dispatches the event to the specific piece
      */
     private void selectPiece(MotionEvent event, int pos) {
+        selectedPiecePosition = pos;
         for (PieceView p : pieceList) {
             if (p.getPosition() == pos) {
                 p.dispatchTouchEvent(event);
@@ -134,6 +105,17 @@ public class BoardView extends View {
             }
         }
     }
+
+    private void deselectPiece(MotionEvent event, int pos) {
+        selectedPiecePosition = 0;
+        for (PieceView p : pieceList) {
+            if (p.getPosition() == pos) {
+                p.dispatchTouchEvent(event);
+                break;
+            }
+        }
+    }
+
 
     @Override
     protected void onDraw(Canvas canvas) {

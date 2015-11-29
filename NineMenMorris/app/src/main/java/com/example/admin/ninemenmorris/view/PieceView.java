@@ -6,7 +6,6 @@ import android.content.res.Resources;
 import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -59,9 +58,6 @@ public class PieceView extends View {
         }
     }
 
-    public Rect getPiecebounds() {
-        return piecebounds;
-    }
 
     public void setPiecebounds(Rect piecebounds) {
         this.piecebounds = piecebounds;
