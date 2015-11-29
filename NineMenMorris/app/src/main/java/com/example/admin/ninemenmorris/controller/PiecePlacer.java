@@ -35,4 +35,8 @@ public class PiecePlacer {
     public void switchBoardPositions(int from, int to) {
         game.switchBoardPositions(from, to);
     }
+
+    public boolean has3InRow(int position) {
+        return game.remove(position); // konstigt namn, remove?
+    }
 }

@@ -181,8 +181,6 @@ public class NineMenMorrisRules {
         else
             return false;
     }
-
-
     /**
      * Returns EMPTY_SPACE = 0 BLUE_MARKER = 4 RED_MARKER = 5
      */
