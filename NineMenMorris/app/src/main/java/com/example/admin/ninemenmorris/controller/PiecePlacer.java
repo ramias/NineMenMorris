@@ -1,5 +1,7 @@
 package com.example.admin.ninemenmorris.controller;
 
+import android.util.Log;
+
 import com.example.admin.ninemenmorris.model.NineMenMorrisRules;
 
 /**
@@ -7,8 +9,7 @@ import com.example.admin.ninemenmorris.model.NineMenMorrisRules;
  */
 public class PiecePlacer {
     private NineMenMorrisRules game;
-    public static final int NEW_PIECE = 1;
-    public static final int MOVE_PIECE = 2;
+    public static final int NO_ACTION = 0, NEW_PIECE = 1, MOVE_PIECE = 2;
 
     public PiecePlacer() {
         game = new NineMenMorrisRules();
@@ -16,15 +17,22 @@ public class PiecePlacer {
 
     public int touchOn(int position) {
         int from;
-        //Checks if the player has selected a piece
+        //Checks if the player has selected a piece or is placing a new piece on the board
+        // All pieces from a player has to be played out before a player can select a piece.
         if (game.board(position) != game.EMPTY_SPACE) {
-            return MOVE_PIECE;
+            if(game.isSelectable()){
+                return MOVE_PIECE;
+            }
         } else {
             from = 0;
             if (game.legalMove(position, from)) {
                 return NEW_PIECE;
             }
         }
-        return 0;
+        return NO_ACTION;
+    }
+
+    public void switchBoardPositions(int from, int to) {
+        game.switchBoardPositions(from, to);
     }
 }

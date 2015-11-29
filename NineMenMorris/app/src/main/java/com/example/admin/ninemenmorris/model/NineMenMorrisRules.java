@@ -20,7 +20,8 @@ package com.example.admin.ninemenmorris.model;
 
 public class NineMenMorrisRules {
     private int[] gameplan;
-    private int bluemarker, redmarker;
+    private int bluemarker;
+    private int redmarker;
     private int turn; // player in turn
 
     public static final int BLUE_MOVES = 1;
@@ -42,54 +43,54 @@ public class NineMenMorrisRules {
      */
     public boolean legalMove(int To, int From) {
 //        if (color == turn) {
-            if (turn == RED_MOVES) {
-                if (redmarker >= 0) {
-                    if (gameplan[To] == EMPTY_SPACE) {
-                        gameplan[To] = RED_MARKER;
-                        redmarker--;
-                        turn = BLUE_MOVES;
-                        return true;
-                    }
-                }
-                /*else*/
+        if (turn == RED_MOVES) {
+            if (redmarker > 0) {
                 if (gameplan[To] == EMPTY_SPACE) {
-                    boolean valid = isValidMove(To, From);
-                    if (valid == true) {
-                        gameplan[To] = RED_MARKER;
-                        //LAGT TILL RADEN UNDER
-                        gameplan[From] = EMPTY_SPACE;
-                        turn = BLUE_MOVES;
-                        return true;
-                    } else {
-                        return false;
-                    }
+                    gameplan[To] = RED_MARKER;
+                    redmarker--;
+                    turn = BLUE_MOVES;
+                    return true;
+                }
+            }
+                /*else*/
+            if (gameplan[To] == EMPTY_SPACE) {
+                boolean valid = isValidMove(To, From);
+                if (valid == true) {
+                    gameplan[To] = RED_MARKER;
+                    //LAGT TILL RADEN UNDER
+                    gameplan[From] = EMPTY_SPACE;
+                    turn = BLUE_MOVES;
+                    return true;
                 } else {
                     return false;
                 }
             } else {
-                if (bluemarker >= 0) {
-                    if (gameplan[To] == EMPTY_SPACE) {
-                        gameplan[To] = BLUE_MARKER;
-                        bluemarker--;
-                        turn = RED_MOVES;
-                        return true;
-                    }
-                }
+                return false;
+            }
+        } else {
+            if (bluemarker > 0) {
                 if (gameplan[To] == EMPTY_SPACE) {
-                    boolean valid = isValidMove(To, From);
-                    if (valid == true) {
-                        gameplan[To] = BLUE_MARKER;
-                        //LAGT TILL RADEN UNDER
-                        gameplan[From] = EMPTY_SPACE;
-                        turn = RED_MOVES;
-                        return true;
-                    } else {
-                        return false;
-                    }
+                    gameplan[To] = BLUE_MARKER;
+                    bluemarker--;
+                    turn = RED_MOVES;
+                    return true;
+                }
+            }
+            if (gameplan[To] == EMPTY_SPACE) {
+                boolean valid = isValidMove(To, From);
+                if (valid == true) {
+                    gameplan[To] = BLUE_MARKER;
+                    //LAGT TILL RADEN UNDER
+                    gameplan[From] = EMPTY_SPACE;
+                    turn = RED_MOVES;
+                    return true;
                 } else {
                     return false;
                 }
+            } else {
+                return false;
             }
+        }
 //        } else {
 //            return false;
 //        }
@@ -151,7 +152,8 @@ public class NineMenMorrisRules {
         return false;
     }
 
-    /** ÄNDRADE FROM TILL TO BARA
+    /**
+     * ÄNDRADE FROM TILL TO BARA
      * Request to remove a marker for the selected player.
      * Returns true if the marker where successfully removed
      */
@@ -246,5 +248,19 @@ public class NineMenMorrisRules {
                 return (from == 3 || from == 21 || from == 23);
         }
         return false;
+    }
+
+
+    public boolean isSelectable() {
+        if (turn == RED_MOVES && redmarker <= 0 || turn == BLUE_MOVES && bluemarker <= 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public void switchBoardPositions(int from, int to) {
+        gameplan[to] = (gameplan[from] == 4) ? 4 : 5;
+        gameplan[from] = EMPTY_SPACE;
     }
 }

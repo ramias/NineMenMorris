@@ -6,6 +6,7 @@ import android.content.res.Resources;
 import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -41,21 +42,14 @@ public class PieceView extends View {
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
-            if (isSelected) {
-                isSelected = false;
-            }else {
-                isSelected = true;
-            }
+            isSelected = !isSelected;
             invalidate();
-            return super.onTouchEvent(event);
         }
-
         return super.onTouchEvent(event);
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
-
         if (isSelected) {
             selectedPiece.setBounds(piecebounds);
             selectedPiece.draw(canvas);

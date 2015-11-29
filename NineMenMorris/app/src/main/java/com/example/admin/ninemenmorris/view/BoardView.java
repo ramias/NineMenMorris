@@ -6,6 +6,7 @@ import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -23,12 +24,15 @@ public class BoardView extends View {
     private Rect piecebounds = null;
     private LinkedList<PieceView> pieceList;
     private String pieceColor;
+    private boolean pieceSelected; // flag to indicate if a piece has been selected.
+    private int selectedPiecePosition;
 
     public BoardView(Context context, AttributeSet attrs) {
         super(context, attrs);
         pieceList = new LinkedList<>();
         placer = new PiecePlacer();
         pieceColor = "RED";
+        pieceSelected = false;
         Resources resources = context.getResources();
         board = (Drawable)
                 resources.getDrawable(R.drawable.board);
@@ -36,36 +40,61 @@ public class BoardView extends View {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
+
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
             int x = (int) event.getX();
             int y = (int) event.getY();
-
             int position = validateCoords(x, y);
             if (position > 0) {
                 int action = placer.touchOn(position);
-                if (action == placer.NEW_PIECE) {
-                    pieceList.add(new PieceView(this.getContext(), piecebounds, position, pieceColor));
-                    toggleColor();
-                    //unfinished code below (else if)
-//                } else if (action == placer.MOVE_PIECE) {
-//                    moviePiece(event,position,piecebounds);
-//                    toggleColor();
-                } else {
+
+                // if-blocket kollar om man har markerat en bricka och valt att placera den på en ny tom position
+                if(pieceSelected && action == 0){
+                    //metod som flyttar den markerade brickan
+                    moviePiece(event, position, piecebounds);
+                    placer.switchBoardPositions(selectedPiecePosition, position);
+                    // Att lägga till:
+                    // Check if player has a mill (3 in a row)
+                    // boolean haveMill = placer.haveMill();
+                    pieceSelected=false;
+                    invalidate();
+                    return true;
+                    // else if-blocket kollar om man har markerat en bricka och sen väljer att av markera samma bricka.
+                }else if (pieceSelected && position==selectedPiecePosition){
+                    pieceSelected=false;
                     selectPiece(event, position);
+                    invalidate();
+                    return true;
+                    // else if-blocket kollar om en bricka är markerad och returnerar false om man försöker placera den över
+                    // andra brickor.
+                }else if(pieceSelected){
+                    return false;
+                }
+                if (action == placer.NEW_PIECE) { // Places a new brick on the board
+                    pieceList.add(new PieceView(this.getContext(), piecebounds, position, pieceColor));
+                    // Check if player has a mill
+                    toggleColor();
+                    // Selects a excisting brick from the bord if all bricks have been played out
+                } else if (action == placer.MOVE_PIECE) {
+                    selectedPiecePosition = position;
+                    selectPiece(event, position);
+                    pieceSelected = true;
                 }
             }
             invalidate();
             return true;
         }
-
         return false;
     }
+
     //Unfinished code
     private void moviePiece(MotionEvent event, int position, Rect piecebounds) {
+        Log.i("mm","moviePiece pos: "+position);
         for (PieceView p : pieceList) {
-            if (p.getPosition() == position) {
+            if (p.getPosition() == selectedPiecePosition) {
                 p.setPosition(position);
                 p.setPiecebounds(piecebounds);
+                p.dispatchTouchEvent(event);
                 break;
             }
         }
