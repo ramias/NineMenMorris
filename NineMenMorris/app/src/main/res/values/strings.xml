@@ -1,5 +1,8 @@
 <resources>
     <string name="app_name">NineMenMorris</string>
     <string name="action_settings">Settings</string>
+    <string name="red_player">RED</string>
+    <string name="blue_player">BLUE</string>
+    <string name="status">MILL</string>
     <string name="boardTxt"></string>
 </resources>
