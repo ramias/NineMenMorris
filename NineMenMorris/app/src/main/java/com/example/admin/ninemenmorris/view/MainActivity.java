@@ -12,9 +12,9 @@ import com.example.admin.ninemenmorris.R;
 public class MainActivity extends AppCompatActivity {
     private final int NEW_GAME = 3300;
     private BoardView board;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(
@@ -28,7 +28,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        menu.clear();
+        menu.removeItem(0);
         menu.add(0, NEW_GAME, Menu.NONE, "New Game");
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
@@ -43,8 +43,8 @@ public class MainActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_new_game) {
-            //Start new game
+        if (id == NEW_GAME) {
+            recreate();
             return true;
         }
 
