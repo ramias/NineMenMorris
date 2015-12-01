@@ -17,19 +17,19 @@
  */
 package com.example.admin.ninemenmorris.model;
 
-
 public class NineMenMorrisRules {
     private int[] gameplan;
     private int bluemarker;
     private int redmarker;
     private int turn; // player in turn
 
-    public static final int BLUE_MOVES = 1;
-    public static final int RED_MOVES = 2;
+    private final int BLUE_MOVES = 1;
+    private final int RED_MOVES = 2;
+    private final int EMPTY_SPACE = 0;
+    private final int BLUE_MARKER = 4;
+    private final int RED_MARKER = 5;
 
-    public static final int EMPTY_SPACE = 0;
-    public static final int BLUE_MARKER = 4;
-    public static final int RED_MARKER = 5;
+
 
     public NineMenMorrisRules() {
         gameplan = new int[25]; // zeroes
@@ -38,13 +38,21 @@ public class NineMenMorrisRules {
         turn = RED_MOVES;
     }
 
+    public void setTurn(){
+
+        if(turn == BLUE_MOVES){
+            turn = RED_MOVES;
+        }else {
+            turn = BLUE_MOVES;
+        }
+    }
+
     public boolean legalPlacement(int To) {
         if (turn == RED_MOVES) {
             if (redmarker > 0) {
                 if (gameplan[To] == EMPTY_SPACE) {
                     gameplan[To] = RED_MARKER;
                     redmarker--;
-                    turn = BLUE_MOVES;
                     return true;
                 } else {
                     return false;
@@ -57,7 +65,6 @@ public class NineMenMorrisRules {
                 if (gameplan[To] == EMPTY_SPACE) {
                     gameplan[To] = BLUE_MARKER;
                     bluemarker--;
-                    turn = RED_MOVES;
                     return true;
                 } else {
                     return false;
@@ -80,7 +87,6 @@ public class NineMenMorrisRules {
                     gameplan[To] = RED_MARKER;
                     //LAGT TILL RADEN UNDER
                     gameplan[From] = EMPTY_SPACE;
-                    turn = BLUE_MOVES;
                     return true;
                 } else {
                     return false;
@@ -95,7 +101,6 @@ public class NineMenMorrisRules {
                     gameplan[To] = BLUE_MARKER;
                     //LAGT TILL RADEN UNDER
                     gameplan[From] = EMPTY_SPACE;
-                    turn = RED_MOVES;
                     return true;
                 } else {
                     return false;
@@ -112,7 +117,7 @@ public class NineMenMorrisRules {
     /**
      * Returns true if position "to" is part of three in a row.
      */
-    public boolean remove(int to) {
+    public boolean hasMill(int to) {
         if ((to == 1 || to == 4 || to == 7) && gameplan[1] == gameplan[4]
                 && gameplan[4] == gameplan[7]) {
             return true;
@@ -162,6 +167,7 @@ public class NineMenMorrisRules {
                 && gameplan[16] == gameplan[17] && gameplan[17] == gameplan[18]) {
             return true;
         }
+        setTurn();
         return false;
     }
 

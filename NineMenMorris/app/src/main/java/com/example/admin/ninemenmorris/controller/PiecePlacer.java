@@ -1,17 +1,13 @@
 package com.example.admin.ninemenmorris.controller;
 
 import android.util.Log;
-
 import com.example.admin.ninemenmorris.model.NineMenMorrisRules;
-
 /**
  * Created by Rami on 2015-11-28.
  */
 public class PiecePlacer {
     private NineMenMorrisRules game;
     public static final int NO_ACTION = 0, NEW_PIECE = 1, SELECT_PIECE = 2, DESELECT_PIECE = 3, MOVE_PIECE = 4;
-//    private boolean pieceSelected; // flag to indicate if a piece has been selected.
-
 
     public PiecePlacer() {
         game = new NineMenMorrisRules();
@@ -45,9 +41,27 @@ public class PiecePlacer {
         return NO_ACTION;
     }
 
-
     public boolean hasMill(int position) {
-        return game.remove(position); // konstigt namn, remove?
+        return game.hasMill(position);
     }
 
+    // I modellen representerar 4 = BLÅ, 5 = RÖD
+    // Är det tex. röd spelare som ska ta bort en bricka sätts color alltså till 4 = blå
+    public boolean legalRemove(int position, String pieceColor) {
+        int color = 0;
+        if(pieceColor.equals("RED")){
+            color = 4;
+        }else if(pieceColor.equals("BLUE")){
+            color = 5;
+        }else{
+            return false; // händer aldrig
+        }
+        boolean removeSuccessful = game.remove(position, color);
+        if(removeSuccessful){
+            game.setTurn();
+            return true;
+        }else{
+            return false;
+        }
+    }
 }

@@ -6,12 +6,11 @@ import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
-
 import com.example.admin.ninemenmorris.R;
 import com.example.admin.ninemenmorris.controller.PiecePlacer;
-
 import java.util.LinkedList;
 
 /**
@@ -22,8 +21,11 @@ public class BoardView extends View {
     private PiecePlacer placer;
     private Rect piecebounds = null;
     private LinkedList<PieceView> pieceList;
+    private txtView infoPlayerTurnText, haveMillTxt;
     private String pieceColor;
     private int selectedPiecePosition; // If user selects a piece the position is stored here so that the position can be marked as empty later on.
+    private boolean hasMill;
+
 
     public BoardView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -31,10 +33,11 @@ public class BoardView extends View {
         selectedPiecePosition = 0;
         placer = new PiecePlacer();
         pieceColor = "RED";
+        hasMill = false;
 
         Resources resources = context.getResources();
-        board = (Drawable)
-                resources.getDrawable(R.drawable.board);
+        board = (Drawable) resources.getDrawable(R.drawable.board);
+        infoPlayerTurnText = new txtView(this.getContext(),this.getWidth(),this.getHeight(), pieceColor);
     }
 
     @Override
@@ -44,14 +47,36 @@ public class BoardView extends View {
             int y = (int) event.getY();
             int position = validateCoords(x, y);
             if (position > 0) {
+
                 int action = placer.touchOn(position, selectedPiecePosition);
 
-                // if-blocket kollar om man har markerat en bricka och valt att placera den på en ny tom position
+                // Om tidigare klick på skärmen har gett 3 i rad, hasMill=true
+                if (hasMill) {
+                    boolean removePieceAllowed = placer.legalRemove(position, pieceColor);
+                    if(removePieceAllowed){
+                        hasMill = false;
+                        removePiece(event, position);
+                        toggleTurn();
+                        infoPlayerTurnText = new txtView(this.getContext(),this.getWidth(),this.getHeight(), pieceColor);
+                        haveMillTxt = null;
+                        invalidate();
+                        return true;
+                    }else{
+                        return false;
+                    }
+                }
+
                 if (action == placer.NEW_PIECE) { // Places a new brick on the board
                     pieceList.add(new PieceView(this.getContext(), piecebounds, position, pieceColor));
+
                     // Check if player has a mill
-                    toggleTurn();
-                    // Selects a excisting brick from the bord if all bricks have been played out
+                    hasMill = placer.hasMill(position);
+                    if(!hasMill){
+                        toggleTurn();
+                    }else{
+                        haveMillTxt = new txtView(this.getContext(),this.getWidth(),this.getHeight(),"MILL");
+                    }
+                    // Selects an existing brick from the bord if all bricks have been played out
                 } else if (action == placer.SELECT_PIECE) {
                     selectPiece(event, position);
                 } else if (action == placer.DESELECT_PIECE) {
@@ -60,20 +85,32 @@ public class BoardView extends View {
                     moviePiece(position, piecebounds);
                     deselectPiece(event, position);
                     // Check if player has a mill (3 in a row)
-//                    if (placer.hasMill(position)) {
-//                        Kommer vi in här så har vi 3 i rad och ska ges möjligheten att ta en bricka av motståndaren
-//                        Måste ta reda på vems tur det är.
-//                    }
+                    hasMill = placer.hasMill(position);
+                    if(!hasMill) {
+                        toggleTurn();
+                    }else{
+                        haveMillTxt = new txtView(this.getContext(),this.getWidth(),this.getHeight(),"MILL");
+                    }
                 } else {
                     return false;
                 }
             }
+            infoPlayerTurnText = new txtView(this.getContext(),this.getWidth(),this.getHeight(), pieceColor);
             invalidate();
             return true;
         }
         return false;
     }
 
+    private void removePiece(MotionEvent event, int position) {
+        // Om de blir exception! Testa iterator istället.
+        for (PieceView p : pieceList) {
+            if (p.getPosition() == position) {
+                pieceList.remove(p);
+                break;
+            }
+        }
+    }
 
     //Unfinished code
     private void moviePiece(int position, Rect piecebounds) {
@@ -122,6 +159,7 @@ public class BoardView extends View {
         int w = this.getWidth(), h = this.getHeight();
         int size = (w + h) / 2, offset = (w + h) / 14;
         Rect bounds = new Rect(offset + w - size, h - size, size - offset, size);
+        Log.i("aaa","arg1: "+(offset + w - size)+" arg2: "+(h - size)+" arg3: "+(size - offset)+" arg4: "+size);
         board.setBounds(bounds);
         board.draw(canvas);
 
@@ -129,7 +167,8 @@ public class BoardView extends View {
         for (PieceView p : pieceList) {
             p.draw(canvas);
         }
-
+        infoPlayerTurnText.draw(canvas);
+        if(haveMillTxt!=null) haveMillTxt.draw(canvas);
     }
 
     private int validateCoords(int x, int y) {
