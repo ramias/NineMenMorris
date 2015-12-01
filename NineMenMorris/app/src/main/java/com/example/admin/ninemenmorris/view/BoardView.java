@@ -3,6 +3,7 @@ package com.example.admin.ninemenmorris.view;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
@@ -30,8 +31,8 @@ public class BoardView extends View {
     private int selectedPiecePosition; // If user selects a piece the position is stored here so that the position can be marked as empty later on.
 
 
-    public BoardView(Context context,AttributeSet attr) {
-        super(context,attr);
+    public BoardView(Context context, AttributeSet attr) {
+        super(context, attr);
         pieceList = new LinkedList<>();
         selectedPiecePosition = 0;
         placer = new PiecePlacer();
@@ -53,7 +54,7 @@ public class BoardView extends View {
                 if (hasMill) {
                     if (placer.remove(position)) {
                         removePiece(event, position);
-                        if(placer.win().equals(pieceColor)){
+                        if (placer.win().equals(pieceColor)) {
                             endGame();
                         } else {
                             toggleTurn();
@@ -87,6 +88,11 @@ public class BoardView extends View {
 
     private void endGame() {
         statusView.setText(pieceColor + " PLAYER WON");
+        if (pieceColor.equals("RED")) {
+            statusView.setTextColor(Color.parseColor("#ee1818"));
+        } else {
+            statusView.setTextColor(Color.parseColor("#2c7def"));
+        }
         statusView.setVisibility(VISIBLE);
         ended = true;
     }
