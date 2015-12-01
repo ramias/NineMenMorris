@@ -19,8 +19,13 @@ package com.example.admin.ninemenmorris.model;
 
 public class NineMenMorrisRules {
     private int[] gameplan;
-    private int bluemarker;
-    private int redmarker;
+
+    // Markers left in hand
+    private int bluemarker, redmarker;
+
+    //  Markers left on the board
+    private int blueMarkersLeft, redMarkersLeft;
+
     private int turn; // player in turn
 
     private final int BLUE_MOVES = 1;
@@ -29,12 +34,11 @@ public class NineMenMorrisRules {
     private final int BLUE_MARKER = 4;
     private final int RED_MARKER = 5;
 
-
-
     public NineMenMorrisRules() {
         gameplan = new int[25]; // zeroes
         bluemarker = 9;
         redmarker = 9;
+        blueMarkersLeft = redMarkersLeft = 9;
         turn = RED_MOVES;
     }
 

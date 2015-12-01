@@ -26,7 +26,6 @@ public class BoardView extends View {
     private int selectedPiecePosition; // If user selects a piece the position is stored here so that the position can be marked as empty later on.
     private boolean hasMill;
 
-
     public BoardView(Context context, AttributeSet attrs) {
         super(context, attrs);
         pieceList = new LinkedList<>();

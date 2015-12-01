@@ -36,7 +36,6 @@ public class PiecePlacer {
             } else {
                 return DESELECT_PIECE;
             }
-
         }
         return NO_ACTION;
     }
