@@ -1,24 +1,29 @@
 package com.example.admin.ninemenmorris.view;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
 
 import com.example.admin.ninemenmorris.R;
 
 public class MainActivity extends AppCompatActivity {
     private final int NEW_GAME = 3300;
-
+    private BoardView board;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(
                 R.id.toolbar);
         setSupportActionBar(toolbar);
+        board = (BoardView) findViewById(R.id.boardview);
+        board.setRedTurnView((TextView) findViewById(R.id.tvRED));
+        board.setBlueTurnView((TextView) findViewById(R.id.tvBLUE));
+        board.setStatusView((TextView) findViewById(R.id.tvSTATUS));
     }
 
     @Override

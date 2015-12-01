@@ -28,11 +28,11 @@ public class NineMenMorrisRules {
 
     private int turn; // player in turn
 
-    private final int BLUE_MOVES = 1;
-    private final int RED_MOVES = 2;
-    private final int EMPTY_SPACE = 0;
-    private final int BLUE_MARKER = 4;
-    private final int RED_MARKER = 5;
+    public static final int BLUE_MOVES = 1;
+    public static final int RED_MOVES = 2;
+    public static final int EMPTY_SPACE = 0;
+    public static final int BLUE_MARKER = 4;
+    public static final int RED_MARKER = 5;
 
     public NineMenMorrisRules() {
         gameplan = new int[25]; // zeroes
@@ -42,7 +42,7 @@ public class NineMenMorrisRules {
         turn = RED_MOVES;
     }
 
-    public void setTurn(){
+    public void toggleTurn(){
 
         if(turn == BLUE_MOVES){
             turn = RED_MOVES;
@@ -83,7 +83,6 @@ public class NineMenMorrisRules {
      * Returns true if a move is successful
      */
     public boolean legalMove(int To, int From) {
-//        if (color == turn) {
         if (turn == RED_MOVES ) {
             if (gameplan[To] == EMPTY_SPACE && redmarker == 0) {
                 boolean valid = isValidMove(To, From);
@@ -113,9 +112,6 @@ public class NineMenMorrisRules {
                 return false;
             }
         }
-//        } else {
-//            return false;
-//        }
     }
 
     /**
@@ -171,7 +167,7 @@ public class NineMenMorrisRules {
                 && gameplan[16] == gameplan[17] && gameplan[17] == gameplan[18]) {
             return true;
         }
-        setTurn();
+        toggleTurn();
         return false;
     }
 
@@ -180,9 +176,21 @@ public class NineMenMorrisRules {
      * Request to remove a marker for the selected player.
      * Returns true if the marker where successfully removed
      */
-    public boolean remove(int To, int color) {
+    public boolean remove(int To) {
+        int color;
+        //marks the opposing colors turn
+        if(getTurnMarker() == RED_MARKER)
+            color = BLUE_MARKER;
+        else
+            color = RED_MARKER;
+
         if (gameplan[To] == color) {
+            if(color == RED_MARKER)
+                redMarkersLeft--;
+            else
+                blueMarkersLeft--;
             gameplan[To] = EMPTY_SPACE;
+            toggleTurn();
             return true;
         } else
             return false;
@@ -191,18 +199,13 @@ public class NineMenMorrisRules {
     /**
      * Returns true if the selected player have less than three markerss left.
      */
-    public boolean win(int color) {
-        int countMarker = 0;
-        int count = 0;
-        while (count < 23) {
-            if (gameplan[count] != EMPTY_SPACE && gameplan[count] != color)
-                countMarker++;
-            count++;
-        }
-        if (bluemarker <= 0 && redmarker <= 0 && countMarker < 3)
-            return true;
+    public String win() {
+        if(blueMarkersLeft < 3)
+            return "RED";
+        else if(redMarkersLeft < 3)
+            return "BLUE";
         else
-            return false;
+            return "NONE";
     }
 
     /**
@@ -272,15 +275,13 @@ public class NineMenMorrisRules {
         return false;
     }
 
+    public int getTurn(){
+        return turn;
+    }
     public int getTotalMarks(){
         return redmarker + bluemarker;
     }
     public int getTurnMarker() {
         return turn + 3;
-    }
-
-    public void switchBoardPositions(int from, int to) {
-        gameplan[to] = (gameplan[from] == 4) ? 4 : 5;
-        gameplan[from] = EMPTY_SPACE;
     }
 }

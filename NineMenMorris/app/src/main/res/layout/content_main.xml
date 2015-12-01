@@ -20,6 +20,56 @@
         android:gravity="center"
         android:paddingBottom="20dp" />
 
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/framelo">
+
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="RED"
+            android:id="@+id/tvRED"
+            android:layout_alignTop="@+id/filler"
+            android:layout_alignParentStart="true"
+            android:textColor="#ee1818"
+            android:layout_above="@+id/framelo"
+            android:gravity="center"
+            android:layout_weight="2" />
+
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="MILL"
+            android:id="@+id/tvSTATUS"
+            android:layout_alignTop="@+id/filler"
+            android:layout_alignParentStart="true"
+            android:textColor="#358600"
+            android:layout_above="@+id/framelo"
+            android:gravity="center"
+            android:layout_weight="1"
+            android:textStyle="bold"
+            android:visibility="invisible" />
+
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="BLUE"
+            android:id="@+id/tvBLUE"
+            android:layout_alignTop="@+id/filler"
+            android:layout_alignParentStart="true"
+            android:textColor="#2c7def"
+            android:layout_above="@+id/framelo"
+            android:layout_weight="2"
+            android:gravity="center"
+            android:visibility="invisible" />
+
+    </LinearLayout>
+
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"

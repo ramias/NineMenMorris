@@ -6,11 +6,13 @@ import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.TextView;
+
 import com.example.admin.ninemenmorris.R;
 import com.example.admin.ninemenmorris.controller.PiecePlacer;
+
 import java.util.LinkedList;
 
 /**
@@ -21,87 +23,87 @@ public class BoardView extends View {
     private PiecePlacer placer;
     private Rect piecebounds = null;
     private LinkedList<PieceView> pieceList;
-    private txtView infoPlayerTurnText, haveMillTxt;
     private String pieceColor;
-    private int selectedPiecePosition; // If user selects a piece the position is stored here so that the position can be marked as empty later on.
+    private boolean ended;
+    private TextView redTurnView, blueTurnView, statusView;
     private boolean hasMill;
+    private int selectedPiecePosition; // If user selects a piece the position is stored here so that the position can be marked as empty later on.
 
-    public BoardView(Context context, AttributeSet attrs) {
-        super(context, attrs);
+
+    public BoardView(Context context,AttributeSet attr) {
+        super(context,attr);
         pieceList = new LinkedList<>();
         selectedPiecePosition = 0;
         placer = new PiecePlacer();
         pieceColor = "RED";
         hasMill = false;
-
+        ended = false;
         Resources resources = context.getResources();
-        board = (Drawable) resources.getDrawable(R.drawable.board);
-        infoPlayerTurnText = new txtView(this.getContext(),this.getWidth(),this.getHeight(), pieceColor);
+        board = resources.getDrawable(R.drawable.board);
     }
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        if (event.getAction() == MotionEvent.ACTION_DOWN) {
+        if (event.getAction() == MotionEvent.ACTION_DOWN && !ended) {
             int x = (int) event.getX();
             int y = (int) event.getY();
             int position = validateCoords(x, y);
             if (position > 0) {
-
-                int action = placer.touchOn(position, selectedPiecePosition);
-
                 // Om tidigare klick på skärmen har gett 3 i rad, hasMill=true
                 if (hasMill) {
-                    boolean removePieceAllowed = placer.legalRemove(position, pieceColor);
-                    if(removePieceAllowed){
-                        hasMill = false;
+                    if (placer.remove(position)) {
                         removePiece(event, position);
-                        toggleTurn();
-                        infoPlayerTurnText = new txtView(this.getContext(),this.getWidth(),this.getHeight(), pieceColor);
-                        haveMillTxt = null;
-                        invalidate();
-                        return true;
-                    }else{
-                        return false;
-                    }
-                }
-
-                if (action == placer.NEW_PIECE) { // Places a new brick on the board
-                    pieceList.add(new PieceView(this.getContext(), piecebounds, position, pieceColor));
-
-                    // Check if player has a mill
-                    hasMill = placer.hasMill(position);
-                    if(!hasMill){
-                        toggleTurn();
-                    }else{
-                        haveMillTxt = new txtView(this.getContext(),this.getWidth(),this.getHeight(),"MILL");
-                    }
-                    // Selects an existing brick from the bord if all bricks have been played out
-                } else if (action == placer.SELECT_PIECE) {
-                    selectPiece(event, position);
-                } else if (action == placer.DESELECT_PIECE) {
-                    deselectPiece(event, position);
-                } else if (action == placer.MOVE_PIECE) {
-                    moviePiece(position, piecebounds);
-                    deselectPiece(event, position);
-                    // Check if player has a mill (3 in a row)
-                    hasMill = placer.hasMill(position);
-                    if(!hasMill) {
-                        toggleTurn();
-                    }else{
-                        haveMillTxt = new txtView(this.getContext(),this.getWidth(),this.getHeight(),"MILL");
+                        if(placer.win().equals(pieceColor)){
+                            endGame();
+                        } else {
+                            toggleTurn();
+                        }
                     }
                 } else {
-                    return false;
+                    int action = placer.touchOn(position, selectedPiecePosition);
+                    if (action == placer.NEW_PIECE) { // Places a new brick on the board
+                        pieceList.add(new PieceView(this.getContext(), piecebounds, position, pieceColor));
+                        // Selects an existing brick from the bord if all bricks have been played out
+                        hasMill(position);
+                    } else if (action == placer.SELECT_PIECE) {
+                        selectPiece(event, position);
+                    } else if (action == placer.DESELECT_PIECE) {
+                        deselectPiece(event, position);
+                    } else if (action == placer.MOVE_PIECE) {
+                        moviePiece(position, piecebounds);
+                        deselectPiece(event, position);
+                        hasMill(position);
+                    } else {
+                        return false;
+                    }
+
                 }
+                invalidate();
+                return true;
             }
-            infoPlayerTurnText = new txtView(this.getContext(),this.getWidth(),this.getHeight(), pieceColor);
-            invalidate();
-            return true;
         }
         return false;
     }
 
+    private void endGame() {
+        statusView.setText(pieceColor + " PLAYER WON");
+        statusView.setVisibility(VISIBLE);
+        ended = true;
+    }
+
+    private void hasMill(int position) {
+        // Check if player has a mill
+        hasMill = placer.hasMill(position);
+        if (!hasMill) {
+            toggleTurn();
+        } else {
+            statusView.setVisibility(VISIBLE);
+        }
+    }
+
     private void removePiece(MotionEvent event, int position) {
+        hasMill = false;
+        statusView.setVisibility(INVISIBLE);
         // Om de blir exception! Testa iterator istället.
         for (PieceView p : pieceList) {
             if (p.getPosition() == position) {
@@ -123,10 +125,16 @@ public class BoardView extends View {
     }
 
     private void toggleTurn() {
-        if (pieceColor.equals("RED"))
+        if (pieceColor.equals("RED")) {
             pieceColor = "BLUE";
-        else
+            redTurnView.setVisibility(INVISIBLE);
+            blueTurnView.setVisibility(VISIBLE);
+        } else {
             pieceColor = "RED";
+            blueTurnView.setVisibility(INVISIBLE);
+            redTurnView.setVisibility(VISIBLE);
+        }
+
     }
 
     /*
@@ -158,7 +166,6 @@ public class BoardView extends View {
         int w = this.getWidth(), h = this.getHeight();
         int size = (w + h) / 2, offset = (w + h) / 14;
         Rect bounds = new Rect(offset + w - size, h - size, size - offset, size);
-        Log.i("aaa","arg1: "+(offset + w - size)+" arg2: "+(h - size)+" arg3: "+(size - offset)+" arg4: "+size);
         board.setBounds(bounds);
         board.draw(canvas);
 
@@ -166,8 +173,6 @@ public class BoardView extends View {
         for (PieceView p : pieceList) {
             p.draw(canvas);
         }
-        infoPlayerTurnText.draw(canvas);
-        if(haveMillTxt!=null) haveMillTxt.draw(canvas);
     }
 
     private int validateCoords(int x, int y) {
@@ -296,5 +301,17 @@ public class BoardView extends View {
         }
         return -1;
 
+    }
+
+    public void setRedTurnView(TextView redTurnView) {
+        this.redTurnView = redTurnView;
+    }
+
+    public void setBlueTurnView(TextView blueTurnView) {
+        this.blueTurnView = blueTurnView;
+    }
+
+    public void setStatusView(TextView statusView) {
+        this.statusView = statusView;
     }
 }

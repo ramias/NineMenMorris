@@ -1,12 +1,13 @@
 package com.example.admin.ninemenmorris.controller;
 
-import android.util.Log;
 import com.example.admin.ninemenmorris.model.NineMenMorrisRules;
+
 /**
  * Created by Rami on 2015-11-28.
  */
 public class PiecePlacer {
     private NineMenMorrisRules game;
+
     public static final int NO_ACTION = 0, NEW_PIECE = 1, SELECT_PIECE = 2, DESELECT_PIECE = 3, MOVE_PIECE = 4;
 
     public PiecePlacer() {
@@ -14,7 +15,6 @@ public class PiecePlacer {
     }
 
     public int touchOn(int position, int selectedPiecePosition) {
-        Log.i("aa", " pos : " + position + " -- prev pos : " + selectedPiecePosition);
         if (game.getTotalMarks() > 0) { // 1st stage: cant move only place.
             if (game.legalPlacement(position)) {
                 return NEW_PIECE;
@@ -37,30 +37,21 @@ public class PiecePlacer {
                 return DESELECT_PIECE;
             }
         }
+
         return NO_ACTION;
     }
 
-    public boolean hasMill(int position) {
+    public boolean hasMill(int position){
         return game.hasMill(position);
     }
 
-    // I modellen representerar 4 = BLÅ, 5 = RÖD
     // Är det tex. röd spelare som ska ta bort en bricka sätts color alltså till 4 = blå
-    public boolean legalRemove(int position, String pieceColor) {
-        int color = 0;
-        if(pieceColor.equals("RED")){
-            color = 4;
-        }else if(pieceColor.equals("BLUE")){
-            color = 5;
-        }else{
-            return false; // händer aldrig
-        }
-        boolean removeSuccessful = game.remove(position, color);
-        if(removeSuccessful){
-            game.setTurn();
-            return true;
-        }else{
-            return false;
-        }
+    public boolean remove(int position) {
+        return game.remove(position);
+    }
+
+
+    public String win() {
+        return game.win();
     }
 }
