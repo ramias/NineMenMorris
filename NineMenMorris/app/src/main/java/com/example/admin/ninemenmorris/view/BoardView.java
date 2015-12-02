@@ -7,6 +7,7 @@ import android.graphics.Color;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.TextView;
@@ -49,6 +50,7 @@ public class BoardView extends View {
             int x = (int) event.getX();
             int y = (int) event.getY();
             int position = validateCoords(x, y);
+
             if (position > 0) {
                 // Om tidigare klick på skärmen har gett 3 i rad, hasMill=true
                 if (hasMill) {
@@ -61,6 +63,10 @@ public class BoardView extends View {
                         }
                     }
                 } else {
+
+                    Log.i("nn","Piecebounds: w: "+piecebounds.width()+ " h: "+piecebounds.height());
+                    Log.i("nn","boardbounds: w: "+board.getBounds().width()+ " h: "+board.getBounds().height());
+
                     int action = placer.touchOn(position, selectedPiecePosition);
                     if (action == placer.NEW_PIECE) { // Places a new brick on the board
                         pieceList.add(new PieceView(this.getContext(), piecebounds, position, pieceColor));
@@ -183,6 +189,7 @@ public class BoardView extends View {
 
     private int validateCoords(int x, int y) {
         int w = this.getWidth(), h = this.getHeight();
+        Log.i("nn","this: w: "+this.getWidth()+ " h: "+this.getHeight());
         int size = (w + h) / 65;
         // Col, row
         // 1,1
