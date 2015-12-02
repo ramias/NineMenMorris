@@ -19,9 +19,11 @@ public class PieceView extends View {
     private int position;
     private boolean isSelected;
     private Rect piecebounds = null;
+    private String color;
 
     public PieceView(Context context, Rect piecebounds, int position, String color) {
         super(context);
+        this.color = color;
         this.position = position;
         Resources resources = context.getResources();
         if (color.equals("RED")) {
@@ -59,6 +61,9 @@ public class PieceView extends View {
     }
 
 
+    public Rect getPiecebounds(){
+        return piecebounds;
+    }
     public void setPiecebounds(Rect piecebounds) {
         this.piecebounds = piecebounds;
     }
@@ -69,5 +74,13 @@ public class PieceView extends View {
 
     public void setPosition(int position) {
         if (isSelected) this.position = position;
+    }
+
+    public String getColor() {
+        return color;
+    }
+
+    public void setColor(String color) {
+        this.color = color;
     }
 }

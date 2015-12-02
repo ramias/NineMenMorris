@@ -15,6 +15,7 @@ import android.widget.TextView;
 import com.example.admin.ninemenmorris.R;
 import com.example.admin.ninemenmorris.controller.PiecePlacer;
 
+import java.util.HashMap;
 import java.util.LinkedList;
 
 /**
@@ -30,7 +31,7 @@ public class BoardView extends View {
     private TextView redTurnView, blueTurnView, statusView;
     private boolean hasMill;
     private int selectedPiecePosition; // If user selects a piece the position is stored here so that the position can be marked as empty later on.
-
+    private LinkedList<HashMap<String, ?>> piecePlacements; //Used for saving state
 
     public BoardView(Context context, AttributeSet attr) {
         super(context, attr);
@@ -64,8 +65,8 @@ public class BoardView extends View {
                     }
                 } else {
 
-                    Log.i("nn","Piecebounds: w: "+piecebounds.width()+ " h: "+piecebounds.height());
-                    Log.i("nn","boardbounds: w: "+board.getBounds().width()+ " h: "+board.getBounds().height());
+                    Log.i("nn", "Piecebounds: w: " + piecebounds.width() + " h: " + piecebounds.height());
+                    Log.i("nn", "boardbounds: w: " + board.getBounds().width() + " h: " + board.getBounds().height());
 
                     int action = placer.touchOn(position, selectedPiecePosition);
                     if (action == placer.NEW_PIECE) { // Places a new brick on the board
@@ -146,6 +147,22 @@ public class BoardView extends View {
             blueTurnView.setVisibility(INVISIBLE);
             redTurnView.setVisibility(VISIBLE);
         }
+    }
+
+    public void updateView(){
+        if (pieceColor.equals("RED")) {
+            redTurnView.setVisibility(VISIBLE);
+            blueTurnView.setVisibility(INVISIBLE);
+        } else {
+            blueTurnView.setVisibility(VISIBLE);
+            redTurnView.setVisibility(INVISIBLE);
+        }
+        if(hasMill){
+            statusView.setVisibility(VISIBLE);
+        }
+        if(ended){
+            endGame();
+        }
 
     }
 
@@ -189,7 +206,7 @@ public class BoardView extends View {
 
     private int validateCoords(int x, int y) {
         int w = this.getWidth(), h = this.getHeight();
-        Log.i("nn","this: w: "+this.getWidth()+ " h: "+this.getHeight());
+        Log.i("nn", "this: w: " + this.getWidth() + " h: " + this.getHeight());
         int size = (w + h) / 65;
         // Col, row
         // 1,1
@@ -316,6 +333,49 @@ public class BoardView extends View {
 
     }
 
+    public LinkedList<HashMap<String,?>> getPiecePlacements() {
+        LinkedList<HashMap<String,?>> placement = new LinkedList<>();
+        for (PieceView p : pieceList) {
+            HashMap hs = new HashMap();
+            hs.put("left",p.getPiecebounds().left);
+            hs.put("top",p.getPiecebounds().top);
+            hs.put("right",p.getPiecebounds().right);
+            hs.put("bottom",p.getPiecebounds().bottom);
+
+            hs.put("position",p.getPosition());
+            hs.put("color",p.getColor());
+            placement.add(hs);
+        }
+        return placement;
+    }
+
+    public void setPieceList(LinkedList<PieceView> pieceList) {
+        this.pieceList = pieceList;
+    }
+
+
+
+    public void setPieceColor(String pieceColor) {
+        this.pieceColor = pieceColor;
+
+    }
+
+    public boolean isEnded() {
+        return ended;
+    }
+
+    public boolean isHasMill() {
+        return hasMill;
+    }
+
+    public void setEnded(boolean ended) {
+        this.ended = ended;
+    }
+
+    public void setHasMill(boolean hasMill) {
+        this.hasMill = hasMill;
+    }
+
     public void setRedTurnView(TextView redTurnView) {
         this.redTurnView = redTurnView;
     }
@@ -326,5 +386,9 @@ public class BoardView extends View {
 
     public void setStatusView(TextView statusView) {
         this.statusView = statusView;
+    }
+
+    public String getPieceColor() {
+        return pieceColor;
     }
 }

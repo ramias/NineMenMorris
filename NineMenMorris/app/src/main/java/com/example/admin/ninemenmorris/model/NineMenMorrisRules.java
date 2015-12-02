@@ -18,21 +18,22 @@
 package com.example.admin.ninemenmorris.model;
 
 public class NineMenMorrisRules {
-    private int[] gameplan;
-
-    // Markers left in hand
-    private int bluemarker, redmarker;
-
-    //  Markers left on the board
-    private int blueMarkersLeft, redMarkersLeft;
-
-    private int turn; // player in turn
-
     public static final int BLUE_MOVES = 1;
     public static final int RED_MOVES = 2;
     public static final int EMPTY_SPACE = 0;
     public static final int BLUE_MARKER = 4;
     public static final int RED_MARKER = 5;
+
+    private static int[] gameplan = new int[25];
+
+    // Markers left in hand
+    private static int bluemarker = 9, redmarker = 9;
+
+    //  Markers left on the board
+    private static int blueMarkersLeft = 9, redMarkersLeft = 9;
+
+    private static int turn = RED_MOVES; // player in turn
+
 
     public NineMenMorrisRules() {
         gameplan = new int[25]; // zeroes
@@ -42,11 +43,11 @@ public class NineMenMorrisRules {
         turn = RED_MOVES;
     }
 
-    public void toggleTurn(){
+    public void toggleTurn() {
 
-        if(turn == BLUE_MOVES){
+        if (turn == BLUE_MOVES) {
             turn = RED_MOVES;
-        }else {
+        } else {
             turn = BLUE_MOVES;
         }
     }
@@ -83,7 +84,7 @@ public class NineMenMorrisRules {
      * Returns true if a move is successful
      */
     public boolean legalMove(int To, int From) {
-        if (turn == RED_MOVES ) {
+        if (turn == RED_MOVES) {
             if (gameplan[To] == EMPTY_SPACE && redmarker == 0) {
                 boolean valid = isValidMove(To, From);
                 if (valid == true) {
@@ -179,13 +180,13 @@ public class NineMenMorrisRules {
     public boolean remove(int To) {
         int color;
         //marks the opposing colors turn
-        if(getTurnMarker() == RED_MARKER)
+        if (getTurnMarker() == RED_MARKER)
             color = BLUE_MARKER;
         else
             color = RED_MARKER;
 
         if (gameplan[To] == color) {
-            if(color == RED_MARKER)
+            if (color == RED_MARKER)
                 redMarkersLeft--;
             else
                 blueMarkersLeft--;
@@ -200,9 +201,9 @@ public class NineMenMorrisRules {
      * Returns true if the selected player have less than three markerss left.
      */
     public String win() {
-        if(blueMarkersLeft < 3)
+        if (blueMarkersLeft < 3)
             return "RED";
-        else if(redMarkersLeft < 3)
+        else if (redMarkersLeft < 3)
             return "BLUE";
         else
             return "NONE";
@@ -275,12 +276,58 @@ public class NineMenMorrisRules {
         return false;
     }
 
-    public int getTurn(){
+    public static int[] getGameplan() {
+        return gameplan;
+    }
+
+    public static void setGameplan(int[] gameplan) {
+        NineMenMorrisRules.gameplan = gameplan;
+    }
+
+    public static int getBluemarker() {
+        return bluemarker;
+    }
+
+    public static void setBluemarker(int bluemarker) {
+        NineMenMorrisRules.bluemarker = bluemarker;
+    }
+
+    public static int getRedmarker() {
+        return redmarker;
+    }
+
+    public static void setRedmarker(int redmarker) {
+        NineMenMorrisRules.redmarker = redmarker;
+    }
+
+    public static int getBlueMarkersLeft() {
+        return blueMarkersLeft;
+    }
+
+    public static void setBlueMarkersLeft(int blueMarkersLeft) {
+        NineMenMorrisRules.blueMarkersLeft = blueMarkersLeft;
+    }
+
+    public static int getRedMarkersLeft() {
+        return redMarkersLeft;
+    }
+
+    public static void setRedMarkersLeft(int redMarkersLeft) {
+        NineMenMorrisRules.redMarkersLeft = redMarkersLeft;
+    }
+
+    public static int getTurn() {
         return turn;
     }
-    public int getTotalMarks(){
+
+    public static void setTurn(int turn) {
+        NineMenMorrisRules.turn = turn;
+    }
+
+    public int getTotalMarks() {
         return redmarker + bluemarker;
     }
+
     public int getTurnMarker() {
         return turn + 3;
     }
