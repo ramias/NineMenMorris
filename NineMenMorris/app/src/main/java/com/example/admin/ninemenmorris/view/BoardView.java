@@ -1,5 +1,6 @@
 package com.example.admin.ninemenmorris.view;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Canvas;
@@ -33,6 +34,7 @@ public class BoardView extends View {
     private TextView redTurnView, blueTurnView, statusView;
     private boolean hasMill;
     private int selectedPiecePosition; // If user selects a piece the position is stored here so that the position can be marked as empty later on.
+    private Resources resources;
 
     public BoardView(Context context, AttributeSet attr) {
         super(context, attr);
@@ -42,12 +44,19 @@ public class BoardView extends View {
         pieceColor = "RED";
         hasMill = false;
         ended = false;
-        Resources resources = context.getResources();
+        resources = context.getResources();
         board = resources.getDrawable(R.drawable.board);
     }
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
+
+        Log.i("nn", "this: w/2: " + this.getWidth()/2 + " this: h/2: " + this.getHeight()/2);
+        Log.i("nn", "Board: w: " + board.getBounds().width() + "Board: h: " + board.getBounds().height());
+
+        if(event.getAction()== MotionEvent.ACTION_MOVE){
+            Log.i("coord","x: "+event.getX()+" y: "+event.getY());
+        }
         if (event.getAction() == MotionEvent.ACTION_DOWN && !ended) {
             int x = (int) event.getX();
             int y = (int) event.getY();
@@ -195,9 +204,18 @@ public class BoardView extends View {
 
     @Override
     protected void onDraw(Canvas canvas) {
-        int w = this.getWidth(), h = this.getHeight();
-        int size = (w + h) / 2, offset = (w + h) / 14;
-        Rect bounds = new Rect(offset + w - size, h - size, size - offset, size);
+        int w =0, h=0;
+        if(resources.getConfiguration().orientation == 1){ // PORTRAIT
+            w = this.getWidth();
+            h = this.getWidth();
+        }else{
+            w = this.getHeight();
+            h = this.getHeight();
+        }
+       // w = (w+h)/(10);
+       // h = (w+h)/10;
+        int size = (w + h) / 2, offset = (w+h) / 14;
+        Rect bounds = new Rect(0, 0, w, h);
         board.setBounds(bounds);
         board.draw(canvas);
 
@@ -207,64 +225,77 @@ public class BoardView extends View {
         }
     }
 
+
+    // Nexus S: x: 230.98616 y: 223.0
+    // Nexus 4: x: 375.9957 y: 358.00287
+    // Nexus 5: x: 546.0 y: 495.18066
+
     private int validateCoords(int x, int y) {
-        int w = this.getWidth(), h = this.getHeight();
-        Log.i("nn", "this: w: " + this.getWidth() + " h: " + this.getHeight());
+        int w =0, h=0;
+        if(resources.getConfiguration().orientation == 1){ // PORTRAIT
+            w = this.getWidth();
+            h = this.getWidth();
+        }else{
+            w = this.getHeight();
+            h = this.getHeight();
+        }
+
+        Log.i("nn", "this: w: " + board.getBounds().width() + " h: " + board.getBounds().height());
         int size = (w + h) / 65;
         // Col, row
         // 1,1
-        if (x < w / 28 + size && x > w / 28 - size && y < h / 7 + size && y > h / 7 - size) {
-            piecebounds = new Rect(w / 28 - size, h / 7 - size, w / 28 + size, h / 7 + size);
+        if (x < w / 31 + size && x > w / 31 - size && y < h / 31 + size && y > h / 31 - size) {
+            piecebounds = new Rect(w / 31 - size, h / 31 - size, w / 31 + size, h / 31 + size);
             return 3;
         }
         // 4,1
-        if (x < w / 2 + size && x > w / 2 - size && y < h / 7 + size && y > h / 7 - size) {
-            piecebounds = new Rect(w / 2 - size, h / 7 - size, w / 2 + size, h / 7 + size);
+        if (x < w / 2 + size && x > w / 2 - size && y < h / 31 + size && y > h / 31 - size) {
+            piecebounds = new Rect(w / 2 - size, h / 31 - size, w / 2 + size, h / 31 + size);
             return 6;
         }
         // 7,1
-        if (x < w * 27 / 28 + size && x > w * 27 / 28 - size && y < h / 7 + size && y > h / 7 - size) {
-            piecebounds = new Rect(w * 27 / 28 - size, h / 7 - size, w * 27 / 28 + size, h / 7 + size);
+        if (x < w * 30 / 31 + size && x > w * 30 / 31 - size && y < h / 31 + size && y > h / 31 - size) {
+            piecebounds = new Rect(w * 30 / 31 - size, h / 31 - size, w * 30 / 31 + size, h / 31 + size);
             return 9;
         }
         // 7,4
-        if (x < w * 27 / 28 + size && x > w * 27 / 28 - size && y < h / 2 + size && y > h / 2 - size) {
-            piecebounds = new Rect(w * 27 / 28 - size, h / 2 - size, (w * 27) / 28 + size, h / 2 + size);
+        if (x < w * 30 / 31 + size && x > w * 30 / 31 - size && y < h / 2 + size && y > h / 2 - size) {
+            piecebounds = new Rect(w * 30 / 31 - size, h / 2 - size, (w * 30) / 31 + size, h / 2 + size);
             return 12;
         }
         // 7,7
-        if (x < w * 27 / 28 + size && x > w * 27 / 28 - size && y < h * 6 / 7 + size && y > h * 6 / 7 - size) {
-            piecebounds = new Rect(w * 27 / 28 - size, h * 6 / 7 - size, (w * 27) / 28 + size, h * 6 / 7 + size);
+        if (x < w * 30 / 31 + size && x > w * 30 / 31 - size && y < h * 30 / 31 + size && y > h * 30 / 31 - size) {
+            piecebounds = new Rect(w * 30 / 31 - size, h * 30 / 31 - size, (w * 30) / 31 + size, h * 30 / 31 + size);
             return 15;
         }
         // 4, 7
-        if (x < w / 2 + size && x > w / 2 - size && y < h * 6 / 7 + size && y > h * 6 / 7 - size) {
-            piecebounds = new Rect(w / 2 - size, h * 6 / 7 - size, w / 2 + size, h * 6 / 7 + size);
+        if (x < w / 2 + size && x > w / 2 - size && y < h * 30 / 31 + size && y > h * 30 / 31 - size) {
+            piecebounds = new Rect(w / 2 - size, h * 30 / 31 - size, w / 2 + size, h * 30 / 31 + size);
             return 18;
         }
         // 1,7
-        if (x < w / 28 + size && x > w / 28 - size && y < h * 6 / 7 + size && y > h * 6 / 7 - size) {
-            piecebounds = new Rect(w / 28 - size, h * 6 / 7 - size, w / 28 + size, h * 6 / 7 + size);
+        if (x < w / 31 + size && x > w / 31 - size && y < h * 30 / 31 + size && y > h * 30 / 31 - size) {
+            piecebounds = new Rect(w / 31 - size, h * 30 / 31 - size, w / 31 + size, h * 30 / 31 + size);
             return 21;
         }
         // 1,4
-        if (x < w / 28 + size && x > w / 28 - size && y < h / 2 + size && y > h / 2 - size) {
-            piecebounds = new Rect(w / 28 - size, h / 2 - size, w / 28 + size, h / 2 + size);
+        if (x < w / 31 + size && x > w / 31 - size && y < h / 2 + size && y > h / 2 - size) {
+            piecebounds = new Rect(w / 31 - size, h / 2 - size, w / 31 + size, h / 2 + size);
             return 24;
         }
         //2,2
-        if (x < w * 3 / 16 + size && x > w * 3 / 16 - size && y < h * 13 / 50 + size && y > h * 13 / 50 - size) {
-            piecebounds = new Rect(w * 3 / 16 - size, h * 13 / 50 - size, w * 3 / 16 + size, h * 13 / 50 + size);
+        if (x < w * 3 / 16 + size && x > w * 3 / 16 - size && y < h *19/100 + size && y > h *19/100 - size) {
+            piecebounds = new Rect(w * 3 / 16 - size, h * 19/ 100 - size, w * 3 / 16 + size, h *19/ 100 + size);
             return 2;
         }
         //4,2
-        if (x < w / 2 + size && x > w / 2 - size && y < h * 4 / 15 + size && y > h * 4 / 15 - size) {
-            piecebounds = new Rect(w / 2 - size, h * 4 / 15 - size, w / 2 + size, h * 4 / 15 + size);
+        if (x < w / 2 + size && x > w / 2 - size && y < h * 19/ 100 + size && y > h * 19/ 100 - size) {
+            piecebounds = new Rect(w / 2 - size, h * 19/ 100 - size, w / 2 + size, h * 19/ 100 + size);
             return 5;
         }
         //6,2
-        if (x < w * 13 / 16 + size && x > w * 13 / 16 - size && y < h * 13 / 50 + size && y > h * 13 / 50 - size) {
-            piecebounds = new Rect(w * 13 / 16 - size, h * 13 / 50 - size, w * 13 / 16 + size, h * 13 / 50 + size);
+        if (x < w * 13 / 16 + size && x > w * 13 / 16 - size && y < h * 19/ 100 + size && y > h * 19/ 100 - size) {
+            piecebounds = new Rect(w * 13 / 16 - size, h * 19/ 100 - size, w * 13 / 16 + size, h * 19/ 100 + size);
             return 8;
         }
         //6,4
@@ -273,18 +304,18 @@ public class BoardView extends View {
             return 11;
         }
         //6,6
-        if (x < w * 13 / 16 + size && x > w * 13 / 16 - size && y < h * 37 / 50 + size && y > h * 37 / 50 - size) {
-            piecebounds = new Rect(w * 13 / 16 - size, h * 37 / 50 - size, w * 13 / 16 + size, h * 37 / 50 + size);
+        if (x < w * 13 / 16 + size && x > w * 13 / 16 - size && y < h * 81/ 100 + size && y > h * 81/100 - size) {
+            piecebounds = new Rect(w * 13 / 16 - size, h * 81/100 - size, w * 13 / 16 + size, h * 81/100 + size);
             return 14;
         }
         //4,6
-        if (x < w / 2 + size && x > w / 2 - size && y < h * 37 / 50 + size && y > h * 37 / 50 - size) {
-            piecebounds = new Rect(w / 2 - size, h * 37 / 50 - size, w / 2 + size, h * 37 / 50 + size);
+        if (x < w / 2 + size && x > w / 2 - size && y < h * 81/100 + size && y > h * 81/100 - size) {
+            piecebounds = new Rect(w / 2 - size, h * 81/100 - size, w / 2 + size, h * 81/100 + size);
             return 17;
         }
         //2,6
-        if (x < w * 3 / 16 + size && x > w * 3 / 16 - size && y < h * 37 / 50 + size && y > h * 37 / 50 - size) {
-            piecebounds = new Rect(w * 3 / 16 - size, h * 37 / 50 - size, w * 3 / 16 + size, h * 37 / 50 + size);
+        if (x < w * 3 / 16 + size && x > w * 3 / 16 - size && y < h * 81/100 + size && y > h * 81/100 - size) {
+            piecebounds = new Rect(w * 3 / 16 - size, h * 81/100 - size, w * 3 / 16 + size, h * 81/100 + size);
             return 20;
         }
         //2,4
@@ -293,18 +324,18 @@ public class BoardView extends View {
             return 23;
         }
         //3,3
-        if (x < w * 17 / 49 + size && x > w * 17 / 49 - size && y < h * 19 / 50 + size && y > h * 19 / 50 - size) {
-            piecebounds = new Rect(w * 17 / 49 - size, h * 19 / 50 - size, w * 17 / 49 + size, h * 19 / 50 + size);
+        if (x < w * 17 / 49 + size && x > w * 17 / 49 - size && y < h * 17 / 50 + size && y > h * 17 / 50 - size) {
+            piecebounds = new Rect(w * 17 / 49 - size, h * 17 / 50 - size, w * 17 / 49 + size, h * 17 / 50 + size);
             return 1;
         }
         //4,3
-        if (x < w / 2 + size && x > w / 2 - size && y < h * 19 / 50 + size && y > h * 19 / 50 - size) {
-            piecebounds = new Rect(w / 2 - size, h * 19 / 50 - size, w / 2 + size, h * 19 / 50 + size);
+        if (x < w / 2 + size && x > w / 2 - size && y < h * 17 / 50 + size && y > h * 17 / 50 - size) {
+            piecebounds = new Rect(w / 2 - size, h * 17 / 50 - size, w / 2 + size, h * 17 / 50 + size);
             return 4;
         }
         //5,3
-        if (x < w * 32 / 49 + size && x > w * 32 / 49 - size && y < h * 19 / 50 + size && y > h * 19 / 50 - size) {
-            piecebounds = new Rect(w * 32 / 49 - size, h * 19 / 50 - size, w * 32 / 49 + size, h * 19 / 50 + size);
+        if (x < w * 32 / 49 + size && x > w * 32 / 49 - size && y < h * 17 / 50 + size && y > h * 17 / 50 - size) {
+            piecebounds = new Rect(w * 32 / 49 - size, h * 17 / 50 - size, w * 32 / 49 + size, h * 17 / 50 + size);
             return 7;
         }
         //5,4
@@ -313,18 +344,18 @@ public class BoardView extends View {
             return 10;
         }
         //5,5
-        if (x < w * 32 / 49 + size && x > w * 32 / 49 - size && y < h * 31 / 50 + size && y > h * 31 / 50 - size) {
-            piecebounds = new Rect(w * 32 / 49 - size, h * 31 / 50 - size, w * 32 / 49 + size, h * 31 / 50 + size);
+        if (x < w * 32 / 49 + size && x > w * 32 / 49 - size && y < h * 33 / 50 + size && y > h * 33 / 50 - size) {
+            piecebounds = new Rect(w * 32 / 49 - size, h * 33 / 50 - size, w * 32 / 49 + size, h * 33 / 50 + size);
             return 13;
         }
         //4,5
-        if (x < w / 2 + size && x > w / 2 - size && y < h * 31 / 50 + size && y > h * 31 / 50 - size) {
-            piecebounds = new Rect(w / 2 - size, h * 31 / 50 - size, w / 2 + size, h * 31 / 50 + size);
+        if (x < w / 2 + size && x > w / 2 - size && y < h * 33 / 50 + size && y > h * 33 / 50 - size) {
+            piecebounds = new Rect(w / 2 - size, h * 33 / 50 - size, w / 2 + size, h * 33 / 50 + size);
             return 16;
         }
         //3,5
-        if (x < w * 17 / 49 + size && x > w * 17 / 49 - size && y < h * 31 / 50 + size && y > h * 31 / 50 - size) {
-            piecebounds = new Rect(w * 17 / 49 - size, h * 31 / 50 - size, w * 17 / 49 + size, h * 31 / 50 + size);
+        if (x < w * 17 / 49 + size && x > w * 17 / 49 - size && y < h * 33 / 50 + size && y > h * 33 / 50 - size) {
+            piecebounds = new Rect(w * 17 / 49 - size, h * 33 / 50 - size, w * 17 / 49 + size, h * 33 / 50 + size);
             return 19;
         }
         //3,4

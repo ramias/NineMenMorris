@@ -57,6 +57,13 @@ public class MainActivity extends AppCompatActivity {
     private void initializeBoard() {
         Log.i("flow", "initializeBoard");
         gameState = loadState();
+        if(gameState.getGameplan() == null){
+            newGame();
+            gameState = loadState();
+            board.invalidate();
+            board.updateView();
+            return;
+        }
         LinkedList<PieceView> pieceList = new LinkedList<>();
         for (HashMap hm : gameState.getPiecePlacements()) {
             pieceList.add(new PieceView(this, new Rect((int) hm.get("left"), (int) hm.get("top"), (int) hm.get("right"), (int) hm.get("bottom")), (int) hm.get("position"), (String) hm.get("color")));
@@ -65,6 +72,7 @@ public class MainActivity extends AppCompatActivity {
         board.setPieceColor(gameState.getPieceColor());
         board.setEnded(gameState.isEnded());
         board.setHasMill(gameState.isHasMill());
+
 
         Log.i("flow", "If-stateFileExist, gs: " + Arrays.toString(gameState.getGameplan()) + " gs.piececolor: " + gameState.getPieceColor());
         Log.i("flow", "If-stateFileExist, NMM: " + Arrays.toString(NineMenMorrisRules.getGameplan()));

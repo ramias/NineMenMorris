@@ -78,11 +78,12 @@
         android:layout_alignParentStart="true"
         android:layout_marginBottom="50dp"
         android:id="@+id/framelo"
-        android:layout_below="@+id/filler">
+        android:layout_below="@+id/filler"
+        android:layout_alignParentRight="false">
 
         <com.example.admin.ninemenmorris.view.BoardView
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:id="@+id/boardview" />
 
     </FrameLayout>
