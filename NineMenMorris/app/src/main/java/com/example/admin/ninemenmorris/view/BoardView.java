@@ -6,11 +6,13 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
+import android.hardware.Camera;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.admin.ninemenmorris.R;
 import com.example.admin.ninemenmorris.controller.PiecePlacer;
@@ -31,7 +33,6 @@ public class BoardView extends View {
     private TextView redTurnView, blueTurnView, statusView;
     private boolean hasMill;
     private int selectedPiecePosition; // If user selects a piece the position is stored here so that the position can be marked as empty later on.
-    private LinkedList<HashMap<String, ?>> piecePlacements; //Used for saving state
 
     public BoardView(Context context, AttributeSet attr) {
         super(context, attr);
@@ -159,6 +160,8 @@ public class BoardView extends View {
         }
         if(hasMill){
             statusView.setVisibility(VISIBLE);
+        }else{
+            statusView.setVisibility(INVISIBLE);
         }
         if(ended){
             endGame();
@@ -352,8 +355,6 @@ public class BoardView extends View {
     public void setPieceList(LinkedList<PieceView> pieceList) {
         this.pieceList = pieceList;
     }
-
-
 
     public void setPieceColor(String pieceColor) {
         this.pieceColor = pieceColor;

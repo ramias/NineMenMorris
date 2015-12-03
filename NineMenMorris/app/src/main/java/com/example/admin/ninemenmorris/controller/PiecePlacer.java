@@ -37,11 +37,10 @@ public class PiecePlacer {
                 return DESELECT_PIECE;
             }
         }
-
         return NO_ACTION;
     }
 
-    public boolean hasMill(int position){
+    public boolean hasMill(int position) {
         return game.hasMill(position);
     }
 
@@ -49,7 +48,6 @@ public class PiecePlacer {
     public boolean remove(int position) {
         return game.remove(position);
     }
-
 
     public String win() {
         return game.win();

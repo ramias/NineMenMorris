@@ -1,6 +1,5 @@
 package com.example.admin.ninemenmorris.view;
 
-
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Canvas;
@@ -8,7 +7,6 @@ import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.view.MotionEvent;
 import android.view.View;
-
 import com.example.admin.ninemenmorris.R;
 
 /**
@@ -60,10 +58,10 @@ public class PieceView extends View {
         }
     }
 
-
     public Rect getPiecebounds(){
         return piecebounds;
     }
+
     public void setPiecebounds(Rect piecebounds) {
         this.piecebounds = piecebounds;
     }

@@ -13,6 +13,7 @@ public class GameState implements Serializable {
     private static int bluemarker, redmarker;
     private static int blueMarkersLeft, redMarkersLeft;
     private static int turn;
+
     public GameState() {
     }
 
